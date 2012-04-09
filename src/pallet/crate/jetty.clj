@@ -42,7 +42,7 @@
       [:jetty :group] jetty-group)
      (java/java :openjdk)
      (user/group jetty-group :system true)
-     (user/user jetty-user :system true :shell "/bin/false")
+     (user/user jetty-user :system true :group jetty-group :shell "/bin/false")
      (remote-directory/remote-directory
       install-path
       :url path :unpack :tar :tar-options "xz"
