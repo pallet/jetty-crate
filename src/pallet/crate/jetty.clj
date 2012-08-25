@@ -237,3 +237,14 @@
      (apply-> remote-file deployed-warfile (apply concat options))
      (when-> (:clear-existing opts)
        (exec-script (rm ~exploded-app-dir ~{:r true :f true}))))))
+
+;;; # Server spec
+(defn jetty
+  "Returns a service-spec for installing jetty."
+  [settings]
+  (server-spec
+   :phases {:settings (phase-fn
+                        (jetty-settings settings))
+            :configure (phase-fn
+                         (install-jetty)
+                         (install-jetty-service))}))
