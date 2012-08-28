@@ -50,7 +50,8 @@
    :log-path "/var/log/jetty"
    :install-path "/usr/share/jetty"
    :webapps "/usr/share/jetty/webapps/"
-   :service "jetty"})
+   :service "jetty"
+   :service-defaults {}})
 
 ;;; Based on supplied settings, decide which install strategy we are using
 ;;; for jetty.
@@ -124,15 +125,17 @@
 (defn install-jetty-service
   "Install jetty via download"
   [session  & {:keys [instance-id]}]
-  (let [{:keys [user install-path log-path service no-enable]}
+  (let [{:keys [user install-path log-path service no-enable service-defaults]}
         (get-target-settings session :jetty instance-id ::no-settings)]
     (->
      session
-     (etc-default/write
+     (apply-map->
+      etc-default/write
       "jetty7"
       "JETTY_USER" user
       "JETTY_LOGS" log-path
-      "JETTY_HOME" install-path)
+      "JETTY_HOME" install-path
+      service-defaults)
      (service/init-script
       service :remote-file (str install-path "/bin/jetty.sh"))
      (when-not-> no-enable
